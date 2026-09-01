@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>TikTok 授權完成</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    background: #0f0f0f;
+    color: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+  .card {
+    max-width: 480px;
+    width: 100%;
+    background: #1a1a1a;
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+  }
+  h1 { font-size: 20px; margin-bottom: 8px; }
+  p { color: #b3b3b3; font-size: 14px; line-height: 1.6; }
+  .code-box {
+    margin-top: 20px;
+    padding: 16px;
+    background: #0f0f0f;
+    border: 1px solid #333;
+    border-radius: 10px;
+    word-break: break-all;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 14px;
+    color: #4ade80;
+  }
+  button {
+    margin-top: 16px;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: #fe2c55;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button:active { opacity: 0.8; }
+  .hint { margin-top: 16px; font-size: 13px; color: #808080; }
+  .error { color: #f87171; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>✅ 授權完成</h1>
+    <p>請複製下面這串授權碼，貼回終端機執行中的程式。</p>
+    <div class="code-box" id="codeBox">讀取中…</div>
+    <button id="copyBtn" onclick="copyCode()">複製授權碼</button>
+    <p class="hint">這個頁面只是顯示授權碼用，可以在複製完成後直接關閉分頁。</p>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+    const error = params.get("error");
+    const box = document.getElementById("codeBox");
+    const btn = document.getElementById("copyBtn");
+
+    if (code) {
+      box.textContent = code;
+    } else if (error) {
+      box.textContent = "授權失敗：" + error + (params.get("error_description") ? "（" + params.get("error_description") + "）" : "");
+      box.classList.add("error");
+      btn.style.display = "none";
+    } else {
+      box.textContent = "沒有偵測到授權碼，請確認網址是否正確導回這個頁面。";
+      box.classList.add("error");
+      btn.style.display = "none";
+    }
+
+    function copyCode() {
+      if (!code) return;
+      navigator.clipboard.writeText(code).then(() => {
+        btn.textContent = "已複製 ✓";
+        setTimeout(() => { btn.textContent = "複製授權碼"; }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>
